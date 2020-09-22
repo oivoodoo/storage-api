@@ -33,3 +33,8 @@ db.drop:
 db.migrate:
 	npx sequelize db:migrate
 .PHONY: db.migrate
+
+test:
+	npm test
+.PHONY: test
+
