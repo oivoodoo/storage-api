@@ -18,12 +18,18 @@ pg:
 	$(DOCKER_COMPOSE) up -d
 .PHONY: pg
 
+db.reset: db.drop db.create db.migrate
+
 db.create:
-	createdb storage_api_dev --host 127.0.0.1 --port 5555 -U admin
-	createdb storage_api_test --host 127.0.0.1 --port 5555 -U admin
+	NODE_ENV=development npx sequelize db:create
+	NODE_ENV=test npx sequelize db:create
 .PHONY: db.create
 
 db.drop:
-	dropdb storage_api_dev --host 127.0.0.1 --port 5555 -U admin
-	dropdb storage_api_test --host 127.0.0.1 --port 5555 -U admin
+	NODE_ENV=dev npx sequelize db:drop
+	NODE_ENV=test npx sequelize db:drop
 .PHONY: db.drop
+
+db.migrate:
+	npx sequelize db:migrate
+.PHONY: db.migrate
