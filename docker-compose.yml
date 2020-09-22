@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  pg:
+    image: mdillon/postgis:9.6-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=postgres
+    ports:
+      - "5555:5432"
+    volumes:
+      - storage_api-data:/var/lib/postgresql/data
+    networks:
+      - storage_api-dev
+
+volumes:
+  storage_api-data:
+
+networks:
+  storage_api-dev:
+    external: true
