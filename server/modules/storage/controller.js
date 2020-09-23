@@ -9,12 +9,12 @@ const nope = (res, status = 200) => {
   return res.status(status).json([]);
 };
 
-const error = (res, err) =>  {
+const error = (res, err) => {
   if (process.env.NODE_ENV != 'production') {
     console.log(err);
   }
 
-  if (Array.isArray(err)) {
+  if (err instanceof Array) {
     let errors = err.map((o) => o.message);
     return res.status(500).json({ errors: errors });
   } else {
@@ -34,14 +34,14 @@ export const get = async (req, res) => {
     const attributes = req.body;
 
     const data = await Data.findOne({
-      where: { id: id }
+      where: { id: id },
     });
 
     if (data !== null) {
-      const decryptedValue = decrypt(attributes.decryption_key, data.encrypted_value);
+      const value = decrypt(attributes.decryption_key, data.encrypted_value);
 
-      if (decryptedValue) {
-        return res.status(200).json({ value: decryptedValue });
+      if (value) {
+        return res.status(200).json([value]);
       }
     }
 
