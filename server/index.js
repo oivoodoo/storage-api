@@ -1,19 +1,11 @@
-import express from 'express';
-import { StorageRoutes } from './modules';
-import middlewaresConfig from './config/middlewares';
-
-const app = express();
-middlewaresConfig(app);
-
-app.use('/', [StorageRoutes]);
+import app from './app';
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, err => {
+module.exports = app.listen(PORT, err => {
   if (err) {
     console.error(`👽Houston we have a problem : ${err} ☠️`);
-  }
-  {
+  } else {
     console.log(`🎉 APP Listen to port: ${PORT} 🎉`);
   }
 });
