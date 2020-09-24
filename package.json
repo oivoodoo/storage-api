@@ -10,6 +10,7 @@
     ]
   },
   "scripts": {
+    "start": "node server/index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "migrate": "npx sequelize db:migrate",
     "migrate:reset": "npx sequelize db:migrate:undo:all && npm run migrate",
