@@ -26,12 +26,13 @@ db.create:
 .PHONY: db.create
 
 db.drop:
-	NODE_ENV=dev npx sequelize db:drop
+	NODE_ENV=development npx sequelize db:drop
 	NODE_ENV=test npx sequelize db:drop
 .PHONY: db.drop
 
 db.migrate:
-	npx sequelize db:migrate
+	NODE_ENV=development npx sequelize db:migrate
+	NODE_ENV=test npx sequelize db:migrate
 .PHONY: db.migrate
 
 test:

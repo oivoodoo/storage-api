@@ -8,17 +8,17 @@ export const encrypt = (key, attributes) => {
         .update(key)
         .digest();
     const cipher = crypto.createCipheriv("aes256", ekey, iv);
-    const encrypted = cipher.update(Buffer.from(JSON.stringify(attributes)));
+    const encrypted = cipher.update(JSON.stringify(attributes));
     const encryptedValue = Buffer.concat([encrypted, cipher.final()]);
     return encryptedValue.toString('hex');
 };
 
-export const decrypt = (key, text) => {
+export const decrypt = (key, hash) => {
     const ekey = crypto
         .createHash("sha256")
         .update(key)
         .digest();
     const decipher = crypto.createDecipheriv("aes256", ekey, iv);
-    decipher.update(text, "hex", "binary");
-    return JSON.parse(decipher.final('binary'));
+    const decrypted = Buffer.concat([decipher.update(Buffer.from(hash, 'hex')), decipher.final()]);
+    return JSON.parse(decrypted.toString());
 };

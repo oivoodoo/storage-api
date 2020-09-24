@@ -1,6 +1,9 @@
 import models from '../../../database/models';
 import { encrypt, decrypt } from './encrypt';
 import { validationResult } from 'express-validator';
+import Sequelize from 'sequelize';
+
+const $like = Sequelize.Op.like;
 
 const Data = models.Data;
 
@@ -30,19 +33,21 @@ export const get = async (req, res) => {
       return error(errors.array());
     }
 
-    const id = req.params.id;
+    const id = req.params.id.replace('*', '%');
     const attributes = req.body;
 
-    const data = await Data.findOne({
-      where: { id: id },
+    const datas = await Data.findAll({
+      where: {
+        id: { [$like]: id },
+      }
     });
 
-    if (data !== null) {
-      const value = decrypt(attributes.decryption_key, data.encrypted_value);
+    if (datas.length > 0) {
+      const result = datas.map((data) => {
+        return decrypt(attributes.decryption_key, data.encrypted_value);
+      });
 
-      if (value) {
-        return res.status(200).json([value]);
-      }
+      return res.status(200).json(result);
     }
 
     return nope(res);
@@ -63,7 +68,7 @@ export const set = async (req, res) => {
 
     const encryptedValue = encrypt(attributes.encryption_key, attributes.value);
 
-    Data.sync({ id: id, encrypted_value: encryptedValue }, id);
+    await Data.sync({ id: id, encrypted_value: encryptedValue }, id);
 
     return nope(res, 201);
   } catch (err) {

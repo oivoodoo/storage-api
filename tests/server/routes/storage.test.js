@@ -62,18 +62,40 @@ describe('Storage Endpoints', () => {
 
             const setResp = await request(app)
                 .post('/storage/' + id + '/set')
-                .send({
-                    encryption_key: encKey,
-                    value: value
-                });
+                .send({ encryption_key: encKey, value: value })
             expect(setResp.statusCode).toEqual(201);
 
             const getResp = await request(app)
                 .post('/storage/' + id + '/get')
                 .send({ decryption_key: encKey })
-
             expect(getResp.statusCode).toEqual(200);
             expect(getResp.body).toEqual([value]);
+        });
+
+        it('should be possible to decrypt multiple keys using *', async () => {
+            const id1 = 'pattern-1';
+            const value1 = {
+                key1: 'value1',
+                key2: 'value2'
+            };
+            const id2 = 'pattern-2';
+            const value2 = {
+                key3: 'value3',
+                key4: 'value4'
+            };
+
+            await request(app)
+                .post('/storage/' + id1 + '/set')
+                .send({ encryption_key: encKey, value: value1 })
+            await request(app)
+                .post('/storage/' + id2 + '/set')
+                .send({ encryption_key: encKey, value: value2 })
+
+            const resp = await request(app)
+                .post('/storage/' + 'pattern-*' + '/get')
+                .send({ decryption_key: encKey })
+            expect(resp.statusCode).toEqual(200);
+            expect(resp.body).toEqual([value1, value2]);
         });
     });
 });

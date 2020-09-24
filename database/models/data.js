@@ -16,11 +16,13 @@ module.exports = (sequelize, DataTypes) => {
   Data.sync = async (attributes, id) => {
     const data = await Data.findOne({ where: { id: id } });
     if (data) {
-      data.update(attributes);
+      return data.update(attributes);
     } else {
-      Data.create(attributes);
+      return Data.create(attributes);
     }
-  }
+  };
+
+
 
   return Data;
 };
