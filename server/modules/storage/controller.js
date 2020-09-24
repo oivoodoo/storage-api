@@ -30,7 +30,7 @@ export const get = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return error(errors.array());
+      return error(res, errors.array());
     }
 
     const id = req.params.id.replace('*', '%');
@@ -52,7 +52,7 @@ export const get = async (req, res) => {
 
     return nope(res);
   } catch (err) {
-    return error(res, err);
+    return nope(res);
   }
 };
 
